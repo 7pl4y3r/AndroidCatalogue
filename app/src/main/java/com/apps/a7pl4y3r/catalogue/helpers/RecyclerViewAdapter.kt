@@ -39,8 +39,12 @@ class RecyclerViewAdapter(private val items: ArrayList<Discipline>) : RecyclerVi
 
         init {
 
-            if (adapterPosition != RecyclerView.NO_POSITION && listener != null)
-                listener.onItemClick(discipline, adapterPosition)
+           view.setOnClickListener {
+
+               if (adapterPosition != RecyclerView.NO_POSITION && listener != null)
+                   listener.onItemClick(discipline, adapterPosition)
+
+           }
 
         }
 

@@ -4,19 +4,23 @@ import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.design.widget.NavigationView
+import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.LinearLayoutManager
+import android.view.MenuItem
 import com.apps.a7pl4y3r.catalogue.helpers.Discipline
 import com.apps.a7pl4y3r.catalogue.helpers.DisciplineDatabase
 import com.apps.a7pl4y3r.catalogue.helpers.RecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setToolbar()
         setRecyclerView()
+        setMainDrawer()
 
         fabMain.setOnClickListener {
             startActivity(Intent(this, AddDiscipline::class.java))
@@ -34,6 +38,19 @@ class MainActivity : AppCompatActivity() {
             setRecyclerView()
         }
 
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+
+        when (item.itemId) {
+
+            R.id.menu_item_EditDiscipline -> showToast(this, "Editing discipline", false)
+
+            R.id.menu_item_DeleteDiscipline -> showToast(this, "Deleting discipline", false)
+
+        }
+
+        return true
     }
 
     private fun setToolbar() {
@@ -58,9 +75,20 @@ class MainActivity : AppCompatActivity() {
         adapter.setOnItemClickListener(object : RecyclerViewAdapter.OnItemClickListener {
 
             override fun onItemClick(discipline: Discipline, position: Int) {
-               showToast(this@MainActivity, "Pressed card $position", false)
+                showToast(this@MainActivity, "Pressed card $position", false)
+                println("Pressed card $position")
             }
+
         })
+
+    }
+
+    private fun setMainDrawer() {
+
+        val toggle = ActionBarDrawerToggle(this, drawerMain, tooblarMain, R.string.openDrawer, R.string.closeDrawer)
+        drawerMain.addDrawerListener(toggle)
+        toggle.syncState()
+        navigationViewMain.setNavigationItemSelectedListener(this)
 
     }
 

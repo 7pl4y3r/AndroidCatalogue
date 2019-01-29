@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Catalogue</string>
+    <string name="closeDrawer">Closing drawer</string>
+    <string name="openDrawer">Opening drawer</string>
 </resources>
