@@ -2,7 +2,6 @@ package com.apps.a7pl4y3r.catalogue
 
 import android.content.Context
 import android.content.Intent
-import android.database.Cursor
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.NavigationView
@@ -10,7 +9,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.MenuItem
 import com.apps.a7pl4y3r.catalogue.helpers.Discipline
 import com.apps.a7pl4y3r.catalogue.helpers.DisciplineDatabase
@@ -19,7 +17,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private val tag = "MAIN"
 
     private val items = ArrayList<Discipline>()
     private val itemsToDelete = ArrayList<String>()
@@ -27,7 +24,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var wantsToEdit = false
     private var wantsToDelete = false
 
-    private var disciplineToEditId = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,10 +32,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setRecyclerView()
         setMainDrawer()
 
-        fabMain.setOnClickListener {
-            showToast(this, disciplineToEditId.toString(), false)
-            startActivity(Intent(this, AddDiscipline::class.java))
-        }
+        fabMain.setOnClickListener { startActivity(Intent(this, AddDiscipline::class.java)) }
 
     }
 
@@ -151,10 +144,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 } else if (wantsToEdit) {
 
-                    disciplineToEditId = position
                     wantsToEdit = false
-
-                    startActivity(Intent(this@MainActivity, EditDiscipline::class.java))
+                    startActivity(Intent(this@MainActivity, EditDiscipline::class.java).putExtra(editDisciplineIntentKey, items[position].title))
 
                 }
             }
@@ -191,7 +182,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         db.close()
 
     }
-
-    fun getDiscipline(): Discipline? = if (disciplineToEditId != -1) items[disciplineToEditId] else null
 
 }

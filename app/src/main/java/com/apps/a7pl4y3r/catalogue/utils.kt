@@ -11,6 +11,8 @@ const val mainTitle = "Your notes"
 const val settingDisciplineChange = "SettingDisciplineChange"
 const val valDisciplineChange = "ValDisciplineChange"
 
+const val editDisciplineIntentKey = "editDisciplineTitle"
+
 fun showToast(context: Context, message: String, isLong: Boolean) {
     Toast.makeText(context, message, if (isLong) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show()
 }
