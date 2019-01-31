@@ -2,11 +2,15 @@ package com.apps.a7pl4y3r.catalogue
 
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.NavigationView
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.MenuItem
 import com.apps.a7pl4y3r.catalogue.helpers.Discipline
 import com.apps.a7pl4y3r.catalogue.helpers.DisciplineDatabase
@@ -14,6 +18,16 @@ import com.apps.a7pl4y3r.catalogue.helpers.RecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    private val tag = "MAIN"
+
+    private val items = ArrayList<Discipline>()
+    private val itemsToDelete = ArrayList<String>()
+
+    private var wantsToEdit = false
+    private var wantsToDelete = false
+
+    private var disciplineToEditId = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +37,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setMainDrawer()
 
         fabMain.setOnClickListener {
+            showToast(this, disciplineToEditId.toString(), false)
             startActivity(Intent(this, AddDiscipline::class.java))
         }
 
@@ -31,11 +46,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onResume() {
         super.onResume()
 
-        val sharedPref = getSharedPreferences(settingDisciplineWasAdded, Context.MODE_PRIVATE)
-        if (sharedPref.getBoolean(valDisciplineWasAdded, false)) {
+        val sharedPref = getSharedPreferences(settingDisciplineChange, Context.MODE_PRIVATE)
+        if (sharedPref.getBoolean(valDisciplineChange, false)) {
 
-            sharedPref.edit().putBoolean(valDisciplineWasAdded, false).apply()
+            clearArrayListOfDiscipline(items)
+            sharedPref.edit().putBoolean(valDisciplineChange, false).apply()
             setRecyclerView()
+
         }
 
     }
@@ -44,9 +61,48 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         when (item.itemId) {
 
-            R.id.menu_item_EditDiscipline -> showToast(this, "Editing discipline", false)
+            R.id.menu_item_EditDiscipline -> { wantsToEdit = true }
 
-            R.id.menu_item_DeleteDiscipline -> showToast(this, "Deleting discipline", false)
+            R.id.menu_item_DeleteDiscipline -> {
+
+                if (wantsToDelete) {
+
+                    wantsToDelete = false
+
+                    val db = DisciplineDatabase(this)
+                    var res = db.getDisciplines()
+
+                    printStringArrayList(this, itemsToDelete)
+
+                    for (element in itemsToDelete) {
+
+                        res = db.getDisciplines()
+                        res.moveToFirst()
+                        while (element != res.getString(1))
+                            res.moveToNext()
+
+
+                        db.deleteDiscipline(res.getString(0))
+
+                    }
+
+                    clearArrayListOfString(itemsToDelete)
+                    clearArrayListOfDiscipline(items)
+
+                    db.close()
+                    res.close()
+
+                    showToast(this, "Items were deleted!", false)
+                    setRecyclerView()
+
+                } else {
+
+                    wantsToDelete = true
+                    showToast(this, "Press the items you want to delete and then press the button you just pressed again", true)
+
+                }
+
+            }
 
         }
 
@@ -55,13 +111,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun setToolbar() {
 
-        setSupportActionBar(tooblarMain)
-        tooblarMain.title = mainTitle
+        setSupportActionBar(toolbarMain)
+        toolbarMain.title = mainTitle
     }
 
     private fun setRecyclerView() {
 
-        val adapter = RecyclerViewAdapter(getDisciplineList())
+        setDisciplineList()
+        val adapter = RecyclerViewAdapter(this, items)
 
         recyclerViewMain.setHasFixedSize(true)
         recyclerViewMain.layoutManager = LinearLayoutManager(this)
@@ -74,27 +131,48 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         adapter.setOnItemClickListener(object : RecyclerViewAdapter.OnItemClickListener {
 
-            override fun onItemClick(discipline: Discipline, position: Int) {
-                showToast(this@MainActivity, "Pressed card $position", false)
-                println("Pressed card $position")
-            }
+            override fun onItemClick(card: CardView, items: ArrayList<Discipline>, position: Int) {
 
+                if (wantsToDelete) {
+
+                    if (card.cardBackgroundColor == ContextCompat.getColorStateList(this@MainActivity, R.color.cardColorDefault)) {
+
+                        //Add to deletion
+                        itemsToDelete.add(items[position].title)
+                        card.setCardBackgroundColor(ContextCompat.getColorStateList(this@MainActivity, R.color.cardColorRed))
+
+                    } else {
+
+                        //Remove from deletion
+                        itemsToDelete.remove(items[position].title)
+                        card.setCardBackgroundColor(ContextCompat.getColorStateList(this@MainActivity, R.color.cardColorDefault))
+
+                    }
+
+                } else if (wantsToEdit) {
+
+                    disciplineToEditId = position
+                    wantsToEdit = false
+
+                    startActivity(Intent(this@MainActivity, EditDiscipline::class.java))
+
+                }
+            }
         })
 
     }
 
     private fun setMainDrawer() {
 
-        val toggle = ActionBarDrawerToggle(this, drawerMain, tooblarMain, R.string.openDrawer, R.string.closeDrawer)
+        val toggle = ActionBarDrawerToggle(this, drawerMain, toolbarMain, R.string.openDrawer, R.string.closeDrawer)
         drawerMain.addDrawerListener(toggle)
         toggle.syncState()
         navigationViewMain.setNavigationItemSelectedListener(this)
 
     }
 
-    private fun getDisciplineList(): ArrayList<Discipline> {
+    private fun setDisciplineList() {
 
-        val items = ArrayList<Discipline>()
         val db = DisciplineDatabase(this)
         val res = db.getDisciplines()
 
@@ -112,7 +190,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         res.close()
         db.close()
 
-        return items
     }
+
+    fun getDiscipline(): Discipline? = if (disciplineToEditId != -1) items[disciplineToEditId] else null
 
 }

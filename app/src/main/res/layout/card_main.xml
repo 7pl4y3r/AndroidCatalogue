@@ -4,7 +4,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp">
+        android:layout_marginBottom="4dp"
+        android:id="@+id/card">
 
     <RelativeLayout
             android:layout_width="match_parent"
@@ -35,15 +36,6 @@
                 android:layout_toEndOf="@+id/cardImage"
                 android:layout_below="@+id/cardTitle"
                 android:layout_marginStart="4dp"/>
-
-        <ImageButton
-                android:id="@+id/cardDelete"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_delete"
-                android:background="@android:color/white"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"/>
 
     </RelativeLayout>
 

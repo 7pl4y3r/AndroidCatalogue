@@ -24,8 +24,8 @@ class AddDiscipline : AppCompatActivity() {
                 if (db.insertDiscipline(addDisciplineEditText.text.toString())) {
 
                     showToast(this, "Success!", false)
-                    getSharedPreferences(settingDisciplineWasAdded, Context.MODE_PRIVATE).edit()
-                        .putBoolean(valDisciplineWasAdded, true).apply()
+                    getSharedPreferences(settingDisciplineChange, Context.MODE_PRIVATE).edit()
+                        .putBoolean(valDisciplineChange, true).apply()
 
                 } else {
                     showToast(this, "Database insertion failed!", true)
