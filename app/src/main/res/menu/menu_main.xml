@@ -3,7 +3,7 @@
       tools:showIn="navigation_view">
 
     <item android:id="@+id/title_menu_editor"
-          android:title="Edit disciplines">
+          android:title="Editing">
 
         <menu>
             <item android:id="@+id/menu_item_EditDiscipline"

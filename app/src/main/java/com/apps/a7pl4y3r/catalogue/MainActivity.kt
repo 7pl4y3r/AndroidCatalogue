@@ -65,7 +65,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     val db = DisciplineDatabase(this)
                     var res = db.getDisciplines()
 
-                    printStringArrayList(this, itemsToDelete)
 
                     for (element in itemsToDelete) {
 
@@ -146,6 +145,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                     wantsToEdit = false
                     startActivity(Intent(this@MainActivity, EditDiscipline::class.java).putExtra(editDisciplineIntentKey, items[position].title))
+
+                } else {
+
+                    startActivity(Intent(this@MainActivity, ViewMarks::class.java).putExtra(editDisciplineIntentKey, items[position].title))
 
                 }
             }

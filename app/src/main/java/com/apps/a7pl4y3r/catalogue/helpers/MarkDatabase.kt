@@ -8,11 +8,12 @@ import android.database.sqlite.SQLiteOpenHelper
 
 private const val colId = "id"
 private const val colMark = "mark"
+private const val colDate = "date"
 
 class MarkDatabase(context: Context, private val tableName: String) : SQLiteOpenHelper(context, tableName, null, 1) {
 
     override fun onCreate(db: SQLiteDatabase?) {
-        db?.execSQL("create table $tableName ($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colMark TEXT)")
+        db?.execSQL("create table $tableName ($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colMark TEXT, $colDate TEXT)")
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -20,10 +21,11 @@ class MarkDatabase(context: Context, private val tableName: String) : SQLiteOpen
         onCreate(db)
     }
 
-    fun insertMark(mark: String): Boolean {
+    fun insertMark(mark: String, date: String): Boolean {
 
         val cv = ContentValues()
         cv.put(colMark, mark)
+        cv.put(colDate, date)
 
         return this.writableDatabase.insert(tableName, null, cv) != -1L
     }

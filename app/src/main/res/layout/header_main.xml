@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:text="Control center"
             android:textSize="36sp"
+            android:layout_centerHorizontal="true"
             android:layout_below="@+id/imageViewHeaderMain"
             android:layout_marginTop="24dp"
             android:layout_marginStart="8dp"/>
