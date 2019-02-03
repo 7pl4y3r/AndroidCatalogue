@@ -1,5 +1,6 @@
 package com.apps.a7pl4y3r.catalogue
 
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -13,7 +14,6 @@ import com.apps.a7pl4y3r.catalogue.helpers.Mark
 import com.apps.a7pl4y3r.catalogue.helpers.MarkDatabase
 import com.apps.a7pl4y3r.catalogue.helpers.RecyclerViewAdapterMarks
 import kotlinx.android.synthetic.main.activity_view_marks.*
-import java.util.*
 import kotlin.collections.ArrayList
 
 class ViewMarks : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -40,11 +40,39 @@ class ViewMarks : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLi
 
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        val pref = getSharedPreferences(settingDisciplineChange, Context.MODE_PRIVATE)
+        if (pref.getBoolean(valDisciplineChange, false)) {
+
+            clearArrayListOfMark(items)
+            pref.edit().putBoolean(valDisciplineChange, false).apply()
+            setRecyclerView()
+
+        }
+
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
         when (item.itemId) {
 
-            R.id.menu_item_EditDiscipline -> { wantsToEdit = true }
+            R.id.menu_item_EditDiscipline -> {
+
+                if (wantsToEdit) {
+
+                    wantsToEdit = false
+                    showToast(this, "Done editing", false)
+
+                } else {
+
+                    wantsToEdit = true
+                    showToast(this, "Press the item you want to edit", false)
+
+                }
+
+            }
 
             R.id.menu_item_DeleteDiscipline -> {
 

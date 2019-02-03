@@ -1,5 +1,6 @@
 package com.apps.a7pl4y3r.catalogue
 
+import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.apps.a7pl4y3r.catalogue.helpers.Mark
@@ -25,7 +26,10 @@ class EditMark : AppCompatActivity() {
                 if (intent.getStringExtra(editMarkIntentKey) == null)
                     db.insertMark(editMarkEditText.text.toString(), editMarkDate.text.toString())
                 else
-                    db.updateMark(mark!!.markId, mark!!.markTitle)
+                    db.updateMark(mark!!.markId, editMarkEditText.text.toString())
+
+                getSharedPreferences(settingDisciplineChange, Context.MODE_PRIVATE).edit()
+                    .putBoolean(valDisciplineChange, true).apply()
 
                 showToast(this, "Mark edited", false)
                 finish()
