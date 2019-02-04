@@ -8,6 +8,7 @@
         android:fitsSystemWindows="true"
         tools:context=".MainActivity"
         android:id="@+id/drawerMain"
+        android:background="@color/appBackground"
         tools:openDrawer="start">
 
     <RelativeLayout 
@@ -28,10 +29,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/toolbarMain"
-            android:layout_above="@+id/fabMain"
             android:layout_marginTop="24dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="4dp"/>
 
     <android.support.design.widget.FloatingActionButton
@@ -40,8 +40,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
             android:src="@drawable/ic_add"/>
 
     </RelativeLayout>

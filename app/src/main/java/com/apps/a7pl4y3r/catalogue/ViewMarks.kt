@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
+import android.view.Gravity
 import android.view.MenuItem
 import com.apps.a7pl4y3r.catalogue.helpers.Mark
 import com.apps.a7pl4y3r.catalogue.helpers.MarkDatabase
@@ -24,6 +25,7 @@ class ViewMarks : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLi
 
     private var wantsToDelete = false
     private var wantsToEdit = false
+    private var hasMarks = true
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,63 +58,79 @@ class ViewMarks : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLi
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
-        when (item.itemId) {
+        if (hasMarks) {
 
-            R.id.menu_item_EditDiscipline -> {
+            when (item.itemId) {
 
-                if (wantsToEdit) {
+                R.id.menu_item_EditDiscipline -> {
 
-                    wantsToEdit = false
-                    showToast(this, "Done editing", false)
+                    if (wantsToDelete)
+                        wantsToDelete = false
 
-                } else {
+                    if (wantsToEdit) {
 
-                    wantsToEdit = true
-                    showToast(this, "Press the item you want to edit", false)
+                        wantsToEdit = false
+                        showToast(this, "Done editing", false)
 
-                }
+                    } else {
 
-            }
-
-            R.id.menu_item_DeleteDiscipline -> {
-
-                if (wantsToDelete) {
-
-                    wantsToDelete = false
-
-                    val db = MarkDatabase(this, intent.getStringExtra(editDisciplineIntentKey))
-                    var res = db.getMarks()
-
-                    for (element in itemsToDelete) {
-
-                        res = db.getMarks()
-                        res.moveToFirst()
-                        while (element != res.getString(1))
-                            res.moveToNext()
-
-                        db.deleteMark(res.getString(0))
+                        wantsToEdit = true
+                        showToast(this, "Press the item you want to edit", false)
 
                     }
 
-                    clearArrayListOfMark(items)
-                    clearArrayListOfString(itemsToDelete)
+                }
 
-                    db.close()
-                    res.close()
+                R.id.menu_item_DeleteDiscipline -> {
 
-                    showToast(this, "Marks deleted", false)
-                    setRecyclerView()
+                    if (wantsToEdit)
+                        wantsToEdit = false
 
-                } else {
+                    if (wantsToDelete) {
 
-                    wantsToDelete = true
-                    showToast(this, "Press the items you want to delete and then press the button you just pressed again", true)
+                        wantsToDelete = false
+
+                        val db = MarkDatabase(this, intent.getStringExtra(editDisciplineIntentKey))
+                        var res = db.getMarks()
+
+                        for (element in itemsToDelete) {
+
+                            res = db.getMarks()
+                            res.moveToFirst()
+                            while (element != res.getString(1))
+                                res.moveToNext()
+
+                            db.deleteMark(res.getString(0))
+
+                        }
+
+                        clearArrayListOfMark(items)
+                        clearArrayListOfString(itemsToDelete)
+
+                        db.close()
+                        res.close()
+
+                        showToast(this, "Marks deleted", false)
+                        setRecyclerView()
+
+                    } else {
+
+                        wantsToDelete = true
+                        showToast(
+                            this,
+                            "Press the items you want to delete and then press the button you just pressed again",
+                            true
+                        )
+
+                    }
 
                 }
 
             }
 
         }
+
+        viewMarksDrawer.closeDrawer(Gravity.START)
 
         return true
     }
@@ -152,9 +170,11 @@ class ViewMarks : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLi
 
         if (res.count == 0) {
             items.add(Mark("-1", "No marks yet", getCurrentDateString()))
+            hasMarks = false
 
         } else {
 
+            hasMarks = true
             res.moveToFirst()
             do {
 

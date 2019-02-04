@@ -8,8 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper
 
 private const val databaseName = "disciplineList.db"
 private const val tableName = "disciplineListTable"
-private const val colId = "id";
-private const val colName = "name";
+private const val colId = "id"
+private const val colName = "name"
 
 class DisciplineDatabase(context: Context) : SQLiteOpenHelper(context, databaseName, null, 1) {
 

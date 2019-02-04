@@ -5,6 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/appBackground"
         tools:context=".EditMark">
 
     <TextView
@@ -27,7 +28,9 @@
             android:layout_centerHorizontal="true"
             android:hint="Mark..."
             android:textSize="24sp"
-            android:inputType="number"/>
+            android:inputType="number"
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/darker_gray"/>
 
     <TextView
             android:id="@+id/editMarkDate"
@@ -35,10 +38,11 @@
             android:layout_height="wrap_content"
             android:text="sep 23 2016"
             android:textSize="24sp"
+            android:textColor="@android:color/white"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/editMarkEditText"
             android:layout_marginTop="24dp"
-            android:layout_alignLeft="@+id/editMarkEditText"/>
+            android:layout_alignStart="@+id/editMarkEditText"/>
 
     <LinearLayout
             android:layout_width="match_parent"

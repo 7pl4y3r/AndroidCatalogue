@@ -1,5 +1,6 @@
 package com.apps.a7pl4y3r.catalogue
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.apps.a7pl4y3r.catalogue.helpers.DisciplineDatabase
@@ -23,6 +24,10 @@ class EditDiscipline : AppCompatActivity() {
 
                 db.updateDiscipline(getDisciplineId(), addDisciplineEditText.text.toString())
                 showToast(this, "Updated discipline name", false)
+
+                getSharedPreferences(settingDisciplineChange, Context.MODE_PRIVATE).edit()
+                    .putBoolean(valDisciplineChange, true).apply()
+
                 finish()
 
             }

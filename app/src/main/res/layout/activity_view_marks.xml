@@ -8,6 +8,7 @@
         android:fitsSystemWindows="true"
         tools:context=".ViewMarks"
         tools:openDrawer="start"
+        android:background="@color/appBackground"
         android:id="@+id/viewMarksDrawer">
 
     <RelativeLayout
@@ -27,7 +28,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/viewMarksToolbar"
-            android:layout_marginTop="24dp"/>
+            android:layout_marginTop="24dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"/>
 
         <android.support.design.widget.FloatingActionButton
                 android:id="@+id/viewMarksFab"
@@ -35,8 +39,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="16dp"
                 android:src="@drawable/ic_add"/>
 
     </RelativeLayout>

@@ -2,9 +2,12 @@
 <android.support.v7.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="wrap_content" xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
+        app:cardCornerRadius="8dp"
+        android:elevation="4dp"
+        android:background="@color/cardColorDefault"
         android:id="@+id/card">
 
     <RelativeLayout
@@ -24,6 +27,7 @@
                 android:layout_height="wrap_content"
                 android:text="Dummy title"
                 android:textSize="24sp"
+                android:textColor="@android:color/white"
                 android:layout_toEndOf="@+id/cardImage"
                 android:layout_marginStart="4dp"/>
 
@@ -33,6 +37,7 @@
                 android:layout_height="wrap_content"
                 android:text="Dummy subtitle"
                 android:textSize="16sp"
+                android:textColor="@android:color/white"
                 android:layout_toEndOf="@+id/cardImage"
                 android:layout_below="@+id/cardTitle"
                 android:layout_marginStart="4dp"/>

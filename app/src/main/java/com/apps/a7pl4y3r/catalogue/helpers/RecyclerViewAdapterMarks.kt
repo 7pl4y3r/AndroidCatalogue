@@ -1,6 +1,7 @@
 package com.apps.a7pl4y3r.catalogue.helpers
 
 import android.content.Context
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -21,6 +22,7 @@ class RecyclerViewAdapterMarks(private val context: Context, private val items: 
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.card.setCardBackgroundColor(ContextCompat.getColorStateList(context, R.color.cardColorDefault))
         holder.title.text = items[position].markTitle
         holder.subtitle.text = items[position].markSubtitle
     }

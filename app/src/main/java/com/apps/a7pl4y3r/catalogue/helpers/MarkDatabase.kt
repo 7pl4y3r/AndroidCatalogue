@@ -43,17 +43,24 @@ class MarkDatabase(context: Context, private val tableName: String) : SQLiteOpen
 
     fun deleteMark(id: String): Int? = this.writableDatabase.delete(tableName, "$colId = ?", arrayOf(id))
 
-    fun getCount(): Int {
+    fun getCountInString(): String {
 
         val res = getMarks()
         var c = 0
+
+        if (res.count == 0) {
+            res.close()
+            return "0"
+        }
 
         res.moveToFirst()
         do {
             c++
         } while (res.moveToNext())
 
-        return c
+        res.close()
+
+        return "$c"
     }
 
 }

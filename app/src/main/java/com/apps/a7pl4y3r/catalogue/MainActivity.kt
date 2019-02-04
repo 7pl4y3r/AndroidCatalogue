@@ -9,9 +9,11 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
+import android.view.Gravity
 import android.view.MenuItem
 import com.apps.a7pl4y3r.catalogue.helpers.Discipline
 import com.apps.a7pl4y3r.catalogue.helpers.DisciplineDatabase
+import com.apps.a7pl4y3r.catalogue.helpers.MarkDatabase
 import com.apps.a7pl4y3r.catalogue.helpers.RecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -23,6 +25,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private var wantsToEdit = false
     private var wantsToDelete = false
+
+    private var hasDiscipline = true
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,51 +56,82 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
-        when (item.itemId) {
+        if (hasDiscipline) {
 
-            R.id.menu_item_EditDiscipline -> { wantsToEdit = true }
+            when (item.itemId) {
 
-            R.id.menu_item_DeleteDiscipline -> {
+                R.id.menu_item_EditDiscipline -> {
 
-                if (wantsToDelete) {
+                    if (wantsToDelete)
+                        wantsToDelete = false
 
-                    wantsToDelete = false
+                    if (wantsToEdit) {
 
-                    val db = DisciplineDatabase(this)
-                    var res = db.getDisciplines()
+                        wantsToEdit = false
+                        showToast(this, "Done editing", false)
 
+                    } else {
 
-                    for (element in itemsToDelete) {
-
-                        res = db.getDisciplines()
-                        res.moveToFirst()
-                        while (element != res.getString(1))
-                            res.moveToNext()
-
-
-                        db.deleteDiscipline(res.getString(0))
+                        wantsToEdit = true
+                        showToast(this, "Press the item you want to edit", true)
 
                     }
 
-                    clearArrayListOfString(itemsToDelete)
-                    clearArrayListOfDiscipline(items)
 
-                    db.close()
-                    res.close()
+                }
 
-                    showToast(this, "Items were deleted!", false)
-                    setRecyclerView()
+                R.id.menu_item_DeleteDiscipline -> {
 
-                } else {
+                    if (wantsToEdit)
+                        wantsToEdit = false
 
-                    wantsToDelete = true
-                    showToast(this, "Press the items you want to delete and then press the button you just pressed again", true)
+                    if (wantsToDelete) {
+
+                        wantsToDelete = false
+
+                        val db = DisciplineDatabase(this)
+                        var res = db.getDisciplines()
+
+
+                        for (element in itemsToDelete) {
+
+                            res = db.getDisciplines()
+                            res.moveToFirst()
+                            while (element != res.getString(1))
+                                res.moveToNext()
+
+
+                            db.deleteDiscipline(res.getString(0))
+
+                        }
+
+                        clearArrayListOfString(itemsToDelete)
+                        clearArrayListOfDiscipline(items)
+
+                        db.close()
+                        res.close()
+
+                        showToast(this, "Items were deleted!", false)
+                        setRecyclerView()
+
+                    } else {
+
+                        wantsToDelete = true
+                        showToast(
+                            this,
+                            "Press the items you want to delete and then press the button you just pressed again",
+                            true
+                        )
+
+                    }
 
                 }
 
             }
 
         }
+
+        drawerMain.closeDrawer(Gravity.START)
 
         return true
     }
@@ -117,6 +152,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         recyclerViewMain.adapter = adapter
 
         setRecyclerViewItemClick(adapter)
+
     }
 
     private fun setRecyclerViewItemClick(adapter: RecyclerViewAdapter) {
@@ -146,7 +182,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     wantsToEdit = false
                     startActivity(Intent(this@MainActivity, EditDiscipline::class.java).putExtra(editDisciplineIntentKey, items[position].title))
 
-                } else {
+                } else if (hasDiscipline) {
 
                     startActivity(Intent(this@MainActivity, ViewMarks::class.java).putExtra(editDisciplineIntentKey, items[position].title))
 
@@ -172,12 +208,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         if (res.count == 0) {
             items.add(Discipline("-1", "Empty!?", "Why don't you add a discipline?"))
+            hasDiscipline = false
 
         } else {
 
+            hasDiscipline = true
+
+            var markDb: MarkDatabase
+
             res.moveToFirst()
             do {
-                items.add(Discipline(res.getString(0), res.getString(1), "0"))
+
+                markDb = MarkDatabase(this, res.getString(1))
+                items.add(Discipline(res.getString(0), res.getString(1), markDb.getCountInString()))
+                markDb.close()
+
             } while (res.moveToNext())
         }
 
