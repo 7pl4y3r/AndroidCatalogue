@@ -1,5 +1,6 @@
 package com.apps.a7pl4y3r.catalogue
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -9,6 +10,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.Gravity
 import android.view.MenuItem
 import com.apps.a7pl4y3r.catalogue.helpers.Discipline
@@ -16,9 +18,17 @@ import com.apps.a7pl4y3r.catalogue.helpers.DisciplineDatabase
 import com.apps.a7pl4y3r.catalogue.helpers.MarkDatabase
 import com.apps.a7pl4y3r.catalogue.helpers.RecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_main.*
+import android.widget.Toast
+
+import android.support.v7.widget.RecyclerView
+
+
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+
+    private lateinit var adapter: RecyclerViewAdapter
 
     private val items = ArrayList<Discipline>()
     private val itemsToDelete = ArrayList<String>()
@@ -36,7 +46,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setRecyclerView()
         setMainDrawer()
 
-        fabMain.setOnClickListener { startActivity(Intent(this, AddDiscipline::class.java)) }
+        fabMain.setOnClickListener { startActivityForResult(Intent(this, AddDiscipline::class.java), REQUEST_ADD_SUBJECT) }
 
     }
 
@@ -136,6 +146,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        if (resultCode == Activity.RESULT_OK) {
+
+            when (requestCode) {
+
+                REQUEST_ADD_SUBJECT -> {
+
+                    val db = DisciplineDatabase(this)
+                    db.insertDiscipline(data!!.getStringExtra(EXTRA_TITLE))
+                    items.add(Discipline("0", data.getStringExtra(EXTRA_TITLE), "0"))
+                    adapter.notifyDataSetChanged()
+
+                }
+
+            }
+
+        } else Toast.makeText(this, "Failed!", Toast.LENGTH_SHORT).show()
+
+    }
+
     private fun setToolbar() {
 
         setSupportActionBar(toolbarMain)
@@ -145,13 +177,38 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun setRecyclerView() {
 
         setDisciplineList()
-        val adapter = RecyclerViewAdapter(this, items)
+        adapter = RecyclerViewAdapter(this, items)
 
         recyclerViewMain.setHasFixedSize(true)
         recyclerViewMain.layoutManager = LinearLayoutManager(this)
         recyclerViewMain.adapter = adapter
 
         setRecyclerViewItemClick(adapter)
+
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
+                val db = DisciplineDatabase(this@MainActivity)
+                val item = adapter.getItemAt(viewHolder.adapterPosition)
+
+                items.remove(item)
+                db.deleteDiscipline(item.id)
+                adapter.notifyItemRemoved(viewHolder.adapterPosition)
+
+                Toast.makeText(this@MainActivity, "Deleted!", Toast.LENGTH_SHORT).show()
+
+            }
+
+        }).attachToRecyclerView(recyclerViewMain)
 
     }
 

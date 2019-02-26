@@ -26,6 +26,7 @@ class RecyclerViewAdapter(private val context: Context, private val items: Array
         holder.subtitle.text = (items[position].marksCount)
     }
 
+
     override fun getItemCount(): Int = items.size
 
 
@@ -36,6 +37,11 @@ class RecyclerViewAdapter(private val context: Context, private val items: Array
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.listener = listener
     }
+
+    fun getItemAt(position: Int): Discipline {
+        return items[position]
+    }
+
 
     class ViewHolder(view: View, listener: OnItemClickListener?, items: ArrayList<Discipline>) : RecyclerView.ViewHolder(view) {
 

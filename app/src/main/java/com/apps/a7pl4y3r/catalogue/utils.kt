@@ -16,6 +16,12 @@ const val valDisciplineChange = "ValDisciplineChange"
 const val editDisciplineIntentKey = "editDisciplineTitle"
 const val editMarkIntentKey = "editMarkTitle"
 
+//Requests
+const val REQUEST_ADD_SUBJECT = 1
+
+// Extras discipline
+const val EXTRA_TITLE = "com.apps.a7pl4y3r.catalogue.EXTRA_TITLE"
+
 fun showToast(context: Context, message: String, isLong: Boolean) {
     Toast.makeText(context, message, if (isLong) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show()
 }
