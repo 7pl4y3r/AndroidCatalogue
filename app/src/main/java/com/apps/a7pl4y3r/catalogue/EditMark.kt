@@ -47,7 +47,10 @@ class EditMark : AppCompatActivity() {
     private fun setInitialData() {
 
         db = MarkDatabase(this, intent.getStringExtra(editDisciplineIntentKey))
-        mark = getMarkById()
+
+        if (intent.getStringExtra(editMarkId) != null && intent.getStringExtra(editMarkIntentKey) != null && intent.getStringExtra(editMarkDateStr) != null)
+        mark = Mark(intent.getStringExtra(editMarkId), intent.getStringExtra(editMarkIntentKey),
+            intent.getStringExtra(editMarkDateStr))
 
         editMarkTitle.text = if (intent.getStringExtra(editMarkIntentKey) == null) "Add mark" else "Edit mark"
         editMarkEditText.setText(mark?.markTitle ?: "")

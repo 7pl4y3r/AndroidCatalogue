@@ -38,6 +38,8 @@ class RecyclerViewAdapterMarks(private val context: Context, private val items: 
         this.listener = listener
     }
 
+    fun getItemAt(position: Int): Mark = items[position]
+
     class ViewHolder(view: View, listener: OnItemClickListener?, items: ArrayList<Mark>) : RecyclerView.ViewHolder(view) {
 
         val card: CardView = view.findViewById(R.id.card)

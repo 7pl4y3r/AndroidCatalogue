@@ -9,15 +9,18 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.Gravity
 import android.view.MenuItem
+import android.widget.Toast
 import com.apps.a7pl4y3r.catalogue.helpers.Mark
 import com.apps.a7pl4y3r.catalogue.helpers.MarkDatabase
 import com.apps.a7pl4y3r.catalogue.helpers.RecyclerViewAdapterMarks
 import kotlinx.android.synthetic.main.activity_view_marks.*
 import kotlin.collections.ArrayList
 
-class ViewMarks : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class ViewMarks : AppCompatActivity() {
 
 
     private val items = ArrayList<Mark>()
@@ -56,7 +59,7 @@ class ViewMarks : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLi
 
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+   /* override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
         if (hasMarks) {
 
@@ -133,7 +136,7 @@ class ViewMarks : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLi
         viewMarksDrawer.closeDrawer(Gravity.START)
 
         return true
-    }
+    }*/
 
     private fun setToolbar() {
 
@@ -146,7 +149,7 @@ class ViewMarks : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLi
 
         val toggle = ActionBarDrawerToggle(this, viewMarksDrawer, viewMarksToolbar, R.string.openDrawer, R.string.closeDrawer)
         toggle.syncState()
-        viewMarksNavigationDrawer.setNavigationItemSelectedListener(this)
+        //viewMarksNavigationDrawer.setNavigationItemSelectedListener(this)
 
     }
 
@@ -160,6 +163,27 @@ class ViewMarks : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLi
         viewMarksRecyclerView.adapter = adapter
 
         setRecyclerViewItemClick(adapter)
+
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+
+            override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
+                return false
+            }
+
+            override fun onSwiped(holder: RecyclerView.ViewHolder, position: Int) {
+
+                val db = MarkDatabase(this@ViewMarks, intent.getStringExtra(editDisciplineIntentKey))
+                val item = adapter.getItemAt(holder.adapterPosition)
+
+                db.deleteMark(item.markId)
+                items.remove(item)
+                adapter.notifyItemRemoved(holder.adapterPosition)
+
+                Toast.makeText(this@ViewMarks, "Deleted!", Toast.LENGTH_SHORT).show()
+
+            }
+
+        }).attachToRecyclerView(viewMarksRecyclerView)
 
     }
 
@@ -192,31 +216,13 @@ class ViewMarks : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLi
 
             override fun onItemClick(card: CardView, items: ArrayList<Mark>, position: Int) {
 
-                if (wantsToDelete) {
+              startActivity(Intent(this@ViewMarks, EditMark::class.java)
+                  .putExtra(editMarkId, items[position].markId)
+                  .putExtra(editMarkIntentKey, items[position].markTitle)
+                  .putExtra(editMarkDateStr, items[position].markSubtitle)
+                  .putExtra(editDisciplineIntentKey, intent.getStringExtra(editDisciplineIntentKey))
+              )
 
-
-                    if (card.cardBackgroundColor == ContextCompat.getColorStateList(this@ViewMarks, R.color.cardColorDefault)) {
-
-                        itemsToDelete.add(items[position].markTitle)
-                        card.setCardBackgroundColor(ContextCompat.getColorStateList(this@ViewMarks, R.color.cardColorRed))
-
-                    } else {
-
-                        itemsToDelete.remove(items[position].markTitle)
-                        card.setCardBackgroundColor(ContextCompat.getColorStateList(this@ViewMarks, R.color.cardColorDefault))
-
-                    }
-
-
-                } else if (wantsToEdit) {
-
-                    wantsToEdit = false
-                    val i = Intent(this@ViewMarks, EditMark::class.java)
-                    i.putExtra(editDisciplineIntentKey, intent.getStringExtra(editDisciplineIntentKey))
-                    i.putExtra(editMarkIntentKey, items[position].markId)
-                    startActivity(i)
-
-                }
 
             }
         })
@@ -224,3 +230,29 @@ class ViewMarks : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLi
     }
 
 }
+
+/*if (wantsToDelete) {
+
+
+                  if (card.cardBackgroundColor == ContextCompat.getColorStateList(this@ViewMarks, R.color.cardColorDefault)) {
+
+                      itemsToDelete.add(items[position].markTitle)
+                      card.setCardBackgroundColor(ContextCompat.getColorStateList(this@ViewMarks, R.color.cardColorRed))
+
+                  } else {
+
+                      itemsToDelete.remove(items[position].markTitle)
+                      card.setCardBackgroundColor(ContextCompat.getColorStateList(this@ViewMarks, R.color.cardColorDefault))
+
+                  }
+
+
+              } else if (wantsToEdit) {
+
+                  wantsToEdit = false
+                  val i = Intent(this@ViewMarks, EditMark::class.java)
+                  i.putExtra(editDisciplineIntentKey, intent.getStringExtra(editDisciplineIntentKey))
+                  i.putExtra(editMarkIntentKey, items[position].markId)
+                  startActivity(i)
+
+              } */

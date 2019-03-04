@@ -13,14 +13,21 @@ const val mainTitle = "Your notes"
 const val settingDisciplineChange = "SettingDisciplineChange"
 const val valDisciplineChange = "ValDisciplineChange"
 
+const val settingDbNumber = "settingDbNumber"
+const val valDbNumber = "valDbNumber"
+
 const val editDisciplineIntentKey = "editDisciplineTitle"
 const val editMarkIntentKey = "editMarkTitle"
+const val editMarkId = "editMarkID"
+const val editMarkDateStr = "editMarkDate"
 
 //Requests
 const val REQUEST_ADD_SUBJECT = 1
 
 // Extras discipline
 const val EXTRA_TITLE = "com.apps.a7pl4y3r.catalogue.EXTRA_TITLE"
+
+const val codeName = "codeName"
 
 fun showToast(context: Context, message: String, isLong: Boolean) {
     Toast.makeText(context, message, if (isLong) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show()

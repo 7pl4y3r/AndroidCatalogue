@@ -9,12 +9,13 @@ import android.database.sqlite.SQLiteOpenHelper
 private const val databaseName = "disciplineList.db"
 private const val tableName = "disciplineListTable"
 private const val colId = "id"
+private const val colCodeName = "code_name"
 private const val colName = "name"
 
 class DisciplineDatabase(context: Context) : SQLiteOpenHelper(context, databaseName, null, 1) {
 
     override fun onCreate(db: SQLiteDatabase?) {
-        db?.execSQL("create table $tableName ($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colName TEXT)")
+        db?.execSQL("create table $tableName ($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colCodeName TEXT, $colName TEXT)")
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -22,9 +23,10 @@ class DisciplineDatabase(context: Context) : SQLiteOpenHelper(context, databaseN
         onCreate(db)
     }
 
-    fun insertDiscipline(name: String): Boolean {
+    fun insertDiscipline(codeName: String, name: String): Boolean {
 
         val cv = ContentValues()
+        cv.put(colCodeName, codeName)
         cv.put(colName, name)
 
         return this.writableDatabase.insert(tableName, null, cv) != -1L

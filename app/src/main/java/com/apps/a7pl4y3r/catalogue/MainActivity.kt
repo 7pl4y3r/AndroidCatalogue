@@ -156,7 +156,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 REQUEST_ADD_SUBJECT -> {
 
                     val db = DisciplineDatabase(this)
-                    db.insertDiscipline(data!!.getStringExtra(EXTRA_TITLE))
+                    val pref = getSharedPreferences(settingDbNumber, Context.MODE_PRIVATE)
+                    val dbNumber = pref.getInt(valDbNumber, 0)
+
+                    db.insertDiscipline("$codeName$dbNumber", data!!.getStringExtra(EXTRA_TITLE))
+                    pref.edit().putInt(valDbNumber, dbNumber + 1).apply()
+
                     items.add(Discipline("0", data.getStringExtra(EXTRA_TITLE), "0"))
                     adapter.notifyDataSetChanged()
 
@@ -277,7 +282,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             do {
 
                 markDb = MarkDatabase(this, res.getString(1))
-                items.add(Discipline(res.getString(0), res.getString(1), markDb.getCountInString()))
+                items.add(Discipline(res.getString(0), res.getString(2), markDb.getCountInString()))
                 markDb.close()
 
             } while (res.moveToNext())
